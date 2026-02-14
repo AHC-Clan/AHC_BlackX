@@ -5,71 +5,93 @@
 
 #pragma comment(lib, "winhttp.lib")
 
-static const char* EXPECTED_KEY = "X78-QZ56-EU5M-FYUQ";
+static const char* EXPECTED_KEY = "UBS-YATF-KXXA-YO06";
 static const wchar_t* SERVER_HOST = L"raw.githubusercontent.com";
-static const int SERVER_PORT = INTERNET_DEFAULT_HTTPS_PORT;
+static const int SERVER_PORT = 443;
 static const wchar_t* KEY_FILE_PATH = L"/AHC-Clan/AHC_BlackX/refs/heads/main/AHC_BlackX.txt";
 
 std::string fetchRemoteKey() {
-    std::string result = "";
-    HINTERNET hSession = NULL, hConnect = NULL, hRequest = NULL;
+    std::string result;
 
-    hSession = WinHttpOpen(L"Mozilla/5.0",
+    HINTERNET hSession = WinHttpOpen(
+        L"Mozilla/5.0",
         WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
-        WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
-    if (!hSession) goto cleanup;
+        WINHTTP_NO_PROXY_NAME,
+        WINHTTP_NO_PROXY_BYPASS, 0
+    );
+    if (!hSession) return "";
 
-    hConnect = WinHttpConnect(hSession, SERVER_HOST, SERVER_PORT, 0);
-    if (!hConnect) goto cleanup;
+    DWORD protocols = WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_2 | WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_3;
+    WinHttpSetOption(hSession, WINHTTP_OPTION_SECURE_PROTOCOLS, &protocols, sizeof(protocols));
 
-    hRequest = WinHttpOpenRequest(hConnect, L"GET", KEY_FILE_PATH,
-        NULL, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES,
-        WINHTTP_FLAG_SECURE);
-    if (!hRequest) goto cleanup;
-
-    // 리다이렉트 자동 추적 (HTTPS→HTTP 포함)
-    {
-        DWORD dwRedirectPolicy = WINHTTP_OPTION_REDIRECT_POLICY_ALWAYS;
-        WinHttpSetOption(hRequest, WINHTTP_OPTION_REDIRECT_POLICY,
-            &dwRedirectPolicy, sizeof(dwRedirectPolicy));
+    HINTERNET hConnect = WinHttpConnect(
+        hSession,
+        SERVER_HOST,
+        SERVER_PORT,
+        0
+    );
+    if (!hConnect) {
+        WinHttpCloseHandle(hSession);
+        return "";
     }
 
-    if (!WinHttpSendRequest(hRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0,
-        WINHTTP_NO_REQUEST_DATA, 0, 0, 0)) goto cleanup;
-    if (!WinHttpReceiveResponse(hRequest, NULL)) goto cleanup;
-
-    // HTTP 상태 코드 확인 (200 OK만 허용)
-    {
-        DWORD dwStatusCode = 0;
-        DWORD dwSize = sizeof(DWORD);
-        if (!WinHttpQueryHeaders(hRequest,
-                WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER,
-                WINHTTP_HEADER_NAME_BY_INDEX,
-                &dwStatusCode, &dwSize, WINHTTP_NO_HEADER_INDEX))
-            goto cleanup;
-        if (dwStatusCode != 200) goto cleanup;
+    HINTERNET hRequest = WinHttpOpenRequest(
+        hConnect,
+        L"GET",
+        KEY_FILE_PATH,
+        NULL,
+        WINHTTP_NO_REFERER,
+        WINHTTP_DEFAULT_ACCEPT_TYPES,
+        WINHTTP_FLAG_SECURE
+    );
+    if (!hRequest) {
+        WinHttpCloseHandle(hConnect);
+        WinHttpCloseHandle(hSession);
+        return "";
     }
 
-    // 응답 본문 읽기
-    {
-        char buffer[256] = {0};
-        DWORD bytesRead = 0;
-        if (WinHttpReadData(hRequest, buffer, sizeof(buffer) - 1, &bytesRead)) {
-            buffer[bytesRead] = '\0';
-            result = buffer;
+    BOOL bSend = WinHttpSendRequest(hRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0,
+        WINHTTP_NO_REQUEST_DATA, 0, 0, 0);
+    if (!bSend) {
+        WinHttpCloseHandle(hRequest);
+        WinHttpCloseHandle(hConnect);
+        WinHttpCloseHandle(hSession);
+        return "";
+    }
 
-            // 앞뒤 공백/줄바꿈 제거
-            while (!result.empty() && (result.back() == '\n' || result.back() == '\r' || result.back() == ' '))
-                result.pop_back();
-            while (!result.empty() && (result.front() == '\n' || result.front() == '\r' || result.front() == ' '))
-                result.erase(result.begin());
+    BOOL bRecv = WinHttpReceiveResponse(hRequest, NULL);
+    if (!bRecv) {
+        WinHttpCloseHandle(hRequest);
+        WinHttpCloseHandle(hConnect);
+        WinHttpCloseHandle(hSession);
+        return "";
+    }
+
+    char buffer[256] = {0};
+    DWORD bytesRead = 0;
+    if (WinHttpReadData(hRequest, buffer, sizeof(buffer) - 1, &bytesRead)) {
+        buffer[bytesRead] = '\0';
+        result = buffer;
+
+        // UTF-8 BOM 제거
+        if (result.size() >= 3 &&
+            (unsigned char)result[0] == 0xEF &&
+            (unsigned char)result[1] == 0xBB &&
+            (unsigned char)result[2] == 0xBF) {
+            result.erase(0, 3);
         }
+
+        while (!result.empty() && (result.back() == '\n' || result.back() == '\r' || result.back() == ' '))
+            result.pop_back();
+        while (!result.empty() && (result.front() == '\n' || result.front() == '\r' || result.front() == ' '))
+            result.erase(result.begin());
+    } else {
+        result = "";
     }
 
-cleanup:
-    if (hRequest) WinHttpCloseHandle(hRequest);
-    if (hConnect) WinHttpCloseHandle(hConnect);
-    if (hSession) WinHttpCloseHandle(hSession);
+    WinHttpCloseHandle(hRequest);
+    WinHttpCloseHandle(hConnect);
+    WinHttpCloseHandle(hSession);
     return result;
 }
 

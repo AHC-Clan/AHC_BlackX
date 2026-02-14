@@ -63,12 +63,12 @@ if %errorlevel% neq 0 (
 echo.
 
 :: Copy to addons folder
-set "DLL_PATH=%~dp0dll\x64\Release\AHC_BlackX.dll"
+set "DLL_PATH=%~dp0dll\x64\Release\AHC_BlackX_x64.dll"
 if exist "%DLL_PATH%" (
-    copy /Y "%DLL_PATH%" "%~dp0addons\AHC_BlackX.dll" >nul
+    copy /Y "%DLL_PATH%" "%~dp0addons\AHC_BlackX_x64.dll" >nul
     echo [3/3] Build succeeded!
     echo.
-    echo   Output: %~dp0addons\AHC_BlackX.dll
+    echo   Output: %~dp0addons\AHC_BlackX_x64.dll
     echo.
     echo ============================================
     echo   DLL has been placed in addons\ folder.

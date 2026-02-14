@@ -15,7 +15,7 @@ if (_result != "1") exitWith {
             format ["%1 (%2)", name player, _uid]
         };
         private _msg = format [
-            "AHC 보안 시스템 발동\n사용자 정보를 추적합니다.\n%1",
+            "AHC 보안 시스템 발동\n사용자 정보 추적: %1",
             _nfo
         ];
         cutText ["", "BLACK FADED", 999];

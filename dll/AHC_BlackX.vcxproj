@@ -28,7 +28,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)x64\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)x64\$(Configuration)\obj\</IntDir>
-    <TargetName>AHC_BlackX</TargetName>
+    <TargetName>AHC_BlackX_x64</TargetName>
     <TargetExt>.dll</TargetExt>
   </PropertyGroup>
 
