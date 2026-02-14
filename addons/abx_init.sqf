@@ -14,14 +14,17 @@ if (_result != "1") exitWith {
         } else {
             format ["%1 (%2)", name player, _uid]
         };
-        private _msg = "<t color='#ff0000' size='5'>AHC 보안 시스템 발동<\t>" + "\n" + format ["사용자 정보를 추적합니다.\n%1", _nfo];
+        private _msg = format [
+            "AHC 보안 시스템 발동\n사용자 정보를 추적합니다.\n%1",
+            _nfo
+        ];
         cutText ["", "BLACK FADED", 999];
         titleText [_msg, "PLAIN", -1, false, true];
         while {true} do {
             player enableSimulation false;
             cutText ["", "BLACK FADED"];
             titleText [_msg, "PLAIN"];
-            sleep 0.2;
+            sleep 0.5;
 
         };
     };
