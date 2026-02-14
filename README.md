@@ -41,12 +41,12 @@ AHC_BlackX는 Arma 3의 Extension(DLL) 인터페이스를 활용한 애드온 �
 AHC_BlackX/
 ├── README.md                 # 이 문서
 ├── AHC_BlackX.txt            # 현재 인증 키
-├── build.bat                 # DLL 빌드 스크립트
-├── GenerateNewKey.bat        # 키 갱신 도구 (Manual / Auto)
-├── git.bat                   # Git 커밋/푸시 관리 도구
+├── Build_BlackX.bat          # DLL 빌드 스크립트
+├── Build_KeyGen.bat          # 키 갱신 도구 (Manual / Auto)
+├── Git_Manager.bat           # Git 커밋/푸시 관리 도구
 │
 ├── addons/
-│   ├── AHC_BlackX.dll        # 빌드된 DLL (build.bat으로 생성)
+│   ├── AHC_BlackX.dll        # 빌드된 DLL (Build_BlackX.bat으로 생성)
 │   ├── abx_init.sqf          # 인증 SQF 스크립트
 │   └── SAMPLE_config.cpp     # config.cpp 연동 예시
 │
@@ -75,7 +75,7 @@ AHC_BlackX/
 ### DLL 빌드
 
 ```bat
-build.bat
+Build_BlackX.bat
 ```
 
 Visual Studio의 MSBuild를 자동 탐지하여 `Release|x64` 설정으로 DLL을 빌드합니다.  
@@ -84,7 +84,7 @@ Visual Studio의 MSBuild를 자동 탐지하여 `Release|x64` 설정으로 DLL�
 ### 키 갱신 + 빌드
 
 ```bat
-GenerateNewKey.bat
+Build_KeyGen.bat
 ```
 
 실행 후 아래 모드를 선택합니다:
@@ -135,7 +135,7 @@ call compile preprocessFileLineNumbers "\내_애드온_이름\abx_init.sqf";
 ## Git 관리
 
 ```bat
-git.bat
+Git_Manager.bat
 ```
 
 | 옵션 | 설명 |
@@ -150,7 +150,7 @@ git.bat
 ## 보안 참고 사항
 
 - 인증 키는 GitHub raw URL을 통해 HTTPS로 가져옵니다.
-- 키가 외부에 노출될 경우 `GenerateNewKey.bat`으로 즉시 교체하세요.
+- 키가 외부에 노출될 경우 `Build_KeyGen.bat`으로 즉시 교체하세요.
 - `AHC_BlackX.txt`는 반드시 `main` 브랜치에 push되어 있어야 원격 검증이 동작합니다.
 
 ---

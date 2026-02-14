@@ -6,7 +6,7 @@ $ErrorActionPreference = "Stop"
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $KeyFile = Join-Path $ScriptDir "..\AHC_BlackX.txt"
 $MainCpp = Join-Path $ScriptDir "..\dll\src\main.cpp"
-$BuildBat = Join-Path $ScriptDir "..\build.bat"
+$BuildBat = Join-Path $ScriptDir "..\Build_BlackX.bat"
 
 function Generate-Key {
     $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
