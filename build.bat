@@ -62,17 +62,18 @@ if %errorlevel% neq 0 (
 )
 echo.
 
-:: Copy to project root
+:: Copy to addons folder
 set "DLL_PATH=%~dp0dll\x64\Release\AHC_BlackX.dll"
 if exist "%DLL_PATH%" (
-    copy /Y "%DLL_PATH%" "%~dp0AHC_BlackX.dll" >nul
+    copy /Y "%DLL_PATH%" "%~dp0addons\AHC_BlackX.dll" >nul
     echo [3/3] Build succeeded!
     echo.
-    echo   Output: %~dp0AHC_BlackX.dll
+    echo   Output: %~dp0addons\AHC_BlackX.dll
     echo.
     echo ============================================
-    echo   Copy this DLL to @AHC_Addon\ root or
-    echo   Arma 3 game root directory for deployment.
+    echo   DLL has been placed in addons\ folder.
+    echo   Deploy the addons\ folder contents to
+    echo   @AHC_Addon\ or Arma 3 game root.
     echo ============================================
 ) else (
     echo [ERROR] DLL file not found.

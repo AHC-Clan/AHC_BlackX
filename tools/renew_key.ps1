@@ -4,9 +4,9 @@ param(
 
 $ErrorActionPreference = "Stop"
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$KeyFile = Join-Path $ScriptDir "AHC_BlackX.txt"
-$MainCpp = Join-Path $ScriptDir "dll\src\main.cpp"
-$BuildBat = Join-Path $ScriptDir "build.bat"
+$KeyFile = Join-Path $ScriptDir "..\AHC_BlackX.txt"
+$MainCpp = Join-Path $ScriptDir "..\dll\src\main.cpp"
+$BuildBat = Join-Path $ScriptDir "..\build.bat"
 
 function Generate-Key {
     $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -42,7 +42,7 @@ function Update-MainCppKey($newKey) {
 function Run-Build {
     Write-Host ""
     Write-Host "[BUILD] Running build.bat..."
-    Push-Location $ScriptDir
+    Push-Location (Join-Path $ScriptDir "..")
     & cmd /c $BuildBat
     if ($LASTEXITCODE -ne 0) {
         Write-Host "[ERROR] Build failed."
@@ -74,7 +74,7 @@ if ($Auto) {
     # 2. Commit + push
     Write-Host ""
     Write-Host "[GIT] Committing key change & push..."
-    Push-Location $ScriptDir
+    Push-Location (Join-Path $ScriptDir "..")
     git add AHC_BlackX.txt dll/src/main.cpp
     git commit -m "Update auth key"
     git push origin main
