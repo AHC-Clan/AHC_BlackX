@@ -6,9 +6,9 @@
 #pragma comment(lib, "winhttp.lib")
 
 static const char* EXPECTED_KEY = "X78-QZ56-EU5M-FYUQ";
-static const wchar_t* SERVER_HOST = L"gitea.bornsoul.synology.me";
-static const int SERVER_PORT = 3000;
-static const wchar_t* KEY_FILE_PATH = L"/bornsoul/AHC_BlackX/raw/commit/383ce2da6a2cff67946e4df6ebb1f08a274031fd/AHC_BlackX.txt";
+static const wchar_t* SERVER_HOST = L"raw.githubusercontent.com";
+static const int SERVER_PORT = INTERNET_DEFAULT_HTTPS_PORT;
+static const wchar_t* KEY_FILE_PATH = L"/AHC-Clan/AHC_BlackX/refs/heads/main/AHC_BlackX.txt";
 
 std::string fetchRemoteKey() {
     std::string result = "";
@@ -36,7 +36,7 @@ std::string fetchRemoteKey() {
         NULL,
         WINHTTP_NO_REFERER,
         WINHTTP_DEFAULT_ACCEPT_TYPES,
-        0  // HTTP (HTTPS는 WINHTTP_FLAG_SECURE 사용)
+        WINHTTP_FLAG_SECURE
     );
     if (!hRequest) {
         WinHttpCloseHandle(hConnect);

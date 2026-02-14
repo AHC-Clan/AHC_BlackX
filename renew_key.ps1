@@ -39,23 +39,6 @@ function Update-MainCppKey($newKey) {
     }
 }
 
-function Update-CommitHash($newHash) {
-    $content = Get-Content -Path $MainCpp -Raw -Encoding UTF8
-    if ($content -match '/bornsoul/AHC_BlackX/raw/commit/([0-9a-f]{40})/AHC_BlackX\.txt') {
-        $oldHash = $Matches[1]
-        $content = $content.Replace(
-            "/bornsoul/AHC_BlackX/raw/commit/$oldHash/AHC_BlackX.txt",
-            "/bornsoul/AHC_BlackX/raw/commit/$newHash/AHC_BlackX.txt"
-        )
-        Set-Content -Path $MainCpp -Value $content -NoNewline -Encoding UTF8
-        Write-Host "[OK] main.cpp commit hash -> $newHash"
-    }
-    else {
-        Write-Host "[ERROR] commit hash not found in main.cpp URL"
-        exit 1
-    }
-}
-
 function Run-Build {
     Write-Host ""
     Write-Host "[BUILD] Running build.bat..."
@@ -88,7 +71,7 @@ Update-KeyFile $newKey
 Update-MainCppKey $newKey
 
 if ($Auto) {
-    # 2. First commit + push (key change)
+    # 2. Commit + push
     Write-Host ""
     Write-Host "[GIT] Committing key change & push..."
     Push-Location $ScriptDir
@@ -100,31 +83,10 @@ if ($Auto) {
         Pop-Location
         exit 1
     }
-
-    # 3. Get new commit hash
-    $newHash = (git rev-parse HEAD).Trim()
-    Write-Host "[OK] New commit hash: $newHash"
-
-    # 4. Update commit hash in URL
-    Pop-Location
-    Update-CommitHash $newHash
-
-    # 5. Second commit + push (hash update)
-    Write-Host ""
-    Write-Host "[GIT] Committing hash update & push..."
-    Push-Location $ScriptDir
-    git add dll/src/main.cpp
-    git commit -m "Update commit hash in DLL URL"
-    git push origin main
-    if ($LASTEXITCODE -ne 0) {
-        Write-Host "[ERROR] git push failed."
-        Pop-Location
-        exit 1
-    }
     Pop-Location
 }
 
-# 6. Build
+# 3. Build
 Run-Build
 
 Write-Host ""
@@ -134,8 +96,7 @@ Write-Host "  Key: $newKey"
 if (-not $Auto) {
     Write-Host ""
     Write-Host "  [NOTE] Manual mode."
-    Write-Host "  After git commit/push, you must also update"
-    Write-Host "  the commit hash in main.cpp manually."
+    Write-Host "  After updating, run git commit/push manually."
 }
 Write-Host "============================================"
 Write-Host ""
