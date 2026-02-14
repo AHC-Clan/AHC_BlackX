@@ -8,13 +8,16 @@ echo ============================================
 echo.
 echo   [0] Manual  - Change key + build only
 echo   [1] Auto    - Change key + git push + build
+echo   [2] Preview - Generate key (no changes)
 echo.
-set /p "choice=Select [0-1]: "
+set /p "choice=Select [0-2]: "
 
 if "%choice%"=="0" (
     powershell -ExecutionPolicy Bypass -File "%~dp0tools\renew_key.ps1"
 ) else if "%choice%"=="1" (
     powershell -ExecutionPolicy Bypass -File "%~dp0tools\renew_key.ps1" -Auto
+) else if "%choice%"=="2" (
+    powershell -ExecutionPolicy Bypass -File "%~dp0tools\renew_key.ps1" -Preview
 ) else (
     echo [ERROR] Invalid input: %choice%
 )

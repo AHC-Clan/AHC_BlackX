@@ -1,5 +1,6 @@
 param(
-    [switch]$Auto
+    [switch]$Auto,
+    [switch]$Preview
 )
 
 $ErrorActionPreference = "Stop"
@@ -55,7 +56,7 @@ function Run-Build {
 
 # === Main ===
 $newKey = Generate-Key
-$mode = $(if ($Auto) { "auto" } else { "manual" })
+$mode = $(if ($Preview) { "preview" } elseif ($Auto) { "auto" } else { "manual" })
 
 Write-Host ""
 Write-Host "============================================"
@@ -65,6 +66,13 @@ Write-Host "  New Key : $newKey"
 Write-Host "  Mode    : $mode"
 Write-Host "============================================"
 Write-Host ""
+
+if ($Preview) {
+    Write-Host "  Preview only. No files were changed."
+    Write-Host "============================================"
+    Write-Host ""
+    exit 0
+}
 
 # 1. Update key files
 Update-KeyFile $newKey
