@@ -108,9 +108,16 @@ extern "C" {
         const char* function, const char** argv, int argc) {
 
         if (strcmp(function, "auth") == 0) {
-            std::string remoteKey = fetchRemoteKey();
+            static bool cached = false;
+            static bool authResult = false;
 
-            if (!remoteKey.empty() && remoteKey == EXPECTED_KEY) {
+            if (!cached) {
+                std::string remoteKey = fetchRemoteKey();
+                authResult = (!remoteKey.empty() && remoteKey == EXPECTED_KEY);
+                cached = true;
+            }
+
+            if (authResult) {
                 strncpy_s(output, outputSize, "1", _TRUNCATE);
                 return 0;
             }
