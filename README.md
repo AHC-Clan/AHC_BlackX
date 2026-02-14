@@ -42,6 +42,7 @@ AHC_BlackX/
 ├── README.md                 # 이 문서
 ├── AHC_BlackX.txt            # 현재 인증 키
 ├── build.bat                 # DLL 빌드 스크립트
+├── GenerateNewKey.bat        # 키 갱신 도구 (Manual / Auto)
 ├── git.bat                   # Git 커밋/푸시 관리 도구
 │
 ├── addons/
@@ -55,7 +56,6 @@ AHC_BlackX/
 │       └── main.cpp          # DLL 소스코드
 │
 └── tools/
-    ├── GenerateNewKey.bat    # 키 갱신 도구 (Manual / Auto)
     └── renew_key.ps1         # 키 생성 & 적용 PowerShell 스크립트
 ```
 
@@ -84,7 +84,7 @@ Visual Studio의 MSBuild를 자동 탐지하여 `Release|x64` 설정으로 DLL�
 ### 키 갱신 + 빌드
 
 ```bat
-tools\GenerateNewKey.bat
+GenerateNewKey.bat
 ```
 
 실행 후 아래 모드를 선택합니다:
@@ -150,7 +150,7 @@ git.bat
 ## 보안 참고 사항
 
 - 인증 키는 GitHub raw URL을 통해 HTTPS로 가져옵니다.
-- 키가 외부에 노출될 경우 `tools\GenerateNewKey.bat`으로 즉시 교체하세요.
+- 키가 외부에 노출될 경우 `GenerateNewKey.bat`으로 즉시 교체하세요.
 - `AHC_BlackX.txt`는 반드시 `main` 브랜치에 push되어 있어야 원격 검증이 동작합니다.
 
 ---
